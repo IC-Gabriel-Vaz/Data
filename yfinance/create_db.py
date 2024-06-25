@@ -5,7 +5,7 @@ from get_tickers import get_tickers as ct
 
 def create_yfinance_db(benchmarks):
 
-    conn = sqlite3.connect('PathToYourDB/finance.db')
+    conn = sqlite3.connect('PathToYourDIR/finance2.db')
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -24,6 +24,7 @@ def create_yfinance_db(benchmarks):
 
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS Prices (
+        Benchmark TEXT,
         Ticker TEXT,
         Date TEXT,
         Open REAL,
@@ -51,9 +52,9 @@ def create_yfinance_db(benchmarks):
             hist = yf.download(ticker)
             for date, row in hist.iterrows():
                 cursor.execute('''
-                    INSERT INTO Prices (Ticker, Date, Open, High, Low, Close, Adj_Close, Volume)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (ticker, date.strftime('%Y-%m-%d'), row['Open'], row['High'], row['Low'], row['Close'], row['Adj Close'], row['Volume']))
+                    INSERT INTO Prices (Benchmark, Ticker, Date, Open, High, Low, Close, Adj_Close, Volume)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (benchmark, ticker, date.strftime('%Y-%m-%d'), row['Open'], row['High'], row['Low'], row['Close'], row['Adj Close'], row['Volume']))
 
     conn.commit()
     conn.close()
